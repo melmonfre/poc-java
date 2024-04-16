@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>POC Veículos</title>
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+	
+</head>
+<body>
+
+	<div class="container my-2">
+	<h1>Lista de Veículos</h1>
+	
+	<a th:href = "@{/showNewVehicleForm}" class="btn btn-primary btn-sm mb-3">Adicionar Veículo</a>
+		<form method="get" th:action="@{/}">
+			<label>
+				<input name="keyword" placeholder="Buscar Modelo de Veículo ou Marca" size="50" th:value="${keyword}" type="text">
+			</label>
+			<button class="btn btn-info" type="submit">Pesquisar</button>
+		</form>
+	
+		<table border="1" class = "table table-striped table-responsive-md">
+			<thead>
+				<tr>
+					<th>
+						<a th:href="@{'/page/' + ${currentPage} + '?sortField=model&sortDir=' + ${reverseSortDir}}">
+							Modelo</a>
+					</th>
+					<th>
+					<a th:href="@{'/page/' + ${currentPage} + '?sortField=brand&sortDir=' + ${reverseSortDir}}">
+							Marca</a>
+					</th>
+					<th>
+					<a th:href="@{'/page/' + ${currentPage} + '?sortField=plate&sortDir=' + ${reverseSortDir}}">
+							Placa</a>
+					</th>
+					<th>
+						<a th:href="@{'/page/' + ${currentPage} + '?sortField=fabrication&sortDir=' + ${reverseSortDir}}">
+							Data de Fabricação</a>
+					</th>
+					<th> Ações </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="Vehicle : ${listVehicles}">
+					<td th:text="${Vehicle.model}"></td>
+					<td th:text="${Vehicle.brand}"></td>
+					<td th:text="${Vehicle.plate}"></td>
+					<td th:text="${#dates.format(Vehicle.fabrication, 'dd/MM/yyyy')}"></td>
+					<td> <a th:href="@{/showFormForUpdate/{id}(id=${Vehicle.id})}" class="btn btn-primary">Alterar</a>
+					    <a th:href="@{/deleteVehicle/{id}(id=${Vehicle.id})}" class="btn btn-danger">Deletar</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div th:if = "${totalPages > 1}">
+			<div class = "row col-sm-10">
+				<div class = "col-sm-2">
+					Linhas totais: [[${totalItems}]]
+				</div>
+				<div class = "col-sm-1">
+					<span th:each="i: ${#numbers.sequence(1, totalPages)}">
+						<a th:if="${currentPage != i}" th:href="@{'/page/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+						<span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;
+					</span>
+				</div>
+				<div class = "col-sm-1">
+					<a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+					<span th:unless="${currentPage < totalPages}">Próximo</span>
+				</div>
+				
+				 <div class="col-sm-1">
+    				<a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+					<span th:unless="${currentPage < totalPages}">Último</span>
+   				 </div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
